@@ -26,7 +26,8 @@ function Login() {
         setMessage("Login successful!");
         setIsError(false);
         localStorage.setItem("token", result.token);
-      } else {
+setTimeout(() => navigate("/dashboard"), 2000);     
+ } else {
         setMessage(result.message || "Invalid credentials");
         setIsError(true);
       }
