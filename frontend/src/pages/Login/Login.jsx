@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // ✅ added useNavigate
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+    const navigate = useNavigate(); // ✅ initialize navigate here
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,13 +69,15 @@ setTimeout(() => navigate("/dashboard"), 2000);
         </p>
       )}
 
-      <p>
-        <Link to="/forgot-password">Forgot Password?</Link>
-      </p>
+      <div className="login-links">
+        <div className="forgot-right">
+          <Link to="/forgot-password">Forgot Password?</Link>
+        </div>
 
-      <p>
-        Don’t have an account? <Link to="/signup">Signup</Link>
-      </p>
+        <div className="signup-center">
+          Don’t have an account? <Link to="/signup">Signup</Link>
+        </div>
+      </div>
     </div>
   );
 }
