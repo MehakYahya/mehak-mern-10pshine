@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { sendPasswordResetEmail } = require("../utils/emailService");
+const { sendPasswordResetEmail, sendPasswordResetCodeEmail } = require("../utils/emailService");
 console.log("Imported User model:", User);
 
 // Signup
@@ -65,17 +65,23 @@ router.post("/forgot-password", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found!" });
 
-    // Generate 6-digit code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate 4-digit code
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
     // Store code with user id (expires in 15 min)
     resetCodes[user._id] = { code, expires: Date.now() + 15 * 60 * 1000 };
 
-    // For dev: return code in response (in prod, send via email)
-    res.status(200).json({
-      message: "Password reset code has been generated.",
-      code,
-      info: "Use this code to reset your password. Code expires in 15 minutes."
-    });
+    // Send code via email
+    try {
+      await sendPasswordResetCodeEmail(email, code);
+      res.status(200).json({
+        message: "Password reset code has been sent to your email.",
+        info: "Check your inbox and spam folder. Code expires in 15 minutes."
+      });
+    } catch (emailError) {
+      console.error("Code email sending failed:", emailError);
+      // Fallback: do not return the code in production; return error for now
+      res.status(500).json({ message: "Failed to send reset code email. Please try again later." });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -96,10 +102,29 @@ router.post("/reset-password", async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found!" });
 
     const stored = resetCodes[user._id];
-    if (!stored || stored.code !== code)
-      return res.status(400).json({ message: "Invalid or expired code!" });
-    if (Date.now() > stored.expires)
+    const submittedCode = String(code).trim();
+    if (!stored) return res.status(400).json({ message: "Invalid or expired code!" });
+
+    // Check expiration first
+    if (Date.now() > stored.expires) {
+      // remove expired code
+      delete resetCodes[user._id];
       return res.status(400).json({ message: "Code has expired!" });
+    }
+
+    // initialize attempts counter if missing
+    stored.attempts = stored.attempts || 0;
+
+    // If too many failed attempts, invalidate the code
+    if (stored.attempts >= 5) {
+      delete resetCodes[user._id];
+      return res.status(429).json({ message: "Too many invalid attempts. Please request a new code." });
+    }
+
+    if (stored.code !== submittedCode) {
+      stored.attempts += 1;
+      return res.status(400).json({ message: "Invalid or expired code!" });
+    }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
