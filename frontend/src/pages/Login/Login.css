@@ -1,0 +1,51 @@
+/* Modern Login Container */
+.login-container {
+  max-width: 450px;
+  margin: 60px auto;
+  padding: 40px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #ffffff, #f7f7fb);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid #e6e6f0;
+  margin-bottom: 16px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login-message { text-align:center; margin-top:16px; padding:10px; border-radius:8px; }
+.login-message.success { background:#e6ffed; color:#135e2d; }
+.login-message.error { background:#ffe6e9; color:#70121a; }
+
+.signup-link { text-align:center; margin-top:18px; }
+.signup-link a { color:#667eea; font-weight:600; text-decoration:none; }
+
+@media (max-width:480px) {
+  .login-container { margin:30px 16px; padding:26px; }
+}
