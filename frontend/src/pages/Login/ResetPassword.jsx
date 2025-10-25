@@ -23,7 +23,7 @@ const ResetPassword = () => {
       setCodeError(false);
     }
  
-  }, []);
+  }, [email, tokenState]);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
