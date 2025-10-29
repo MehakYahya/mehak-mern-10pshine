@@ -1,0 +1,204 @@
+.content .ql-toolbar {
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.content .ql-toolbar + .ql-toolbar {
+  display: none;
+}
+.add-tab input[type="text"] {
+  margin-bottom: 12px;
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background-color: #121212;
+  color: #fff;
+}
+
+/* Side Nav */
+.side-nav {
+  width: 220px;
+  background-color: #1f1f2f;
+  padding: 20px;
+}
+
+.side-nav h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.side-nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.side-nav li {
+  padding: 12px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.side-nav li:hover, .side-nav li.active {
+  background-color: #ff4081;
+  color: #fff;
+}
+
+/* Main Content */
+.content {
+  flex: 1;
+  padding: 20px 30px;
+  overflow-y: auto;
+}
+
+/* Top bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* keep logout at right */
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.top-bar input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.logout-btn {
+  background-color: #ff4081;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+}
+
+/* Notes */
+.note-card {
+  background-color: #2a2a3c;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.note-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 10px #ff4081;
+}
+
+.note-card h3, .note-card h4 {
+  margin: 0 0 10px 0;
+}
+
+.note-card .actions button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.note-card .actions button:hover {
+  opacity: 0.8;
+}
+
+/* Add/Edit Form */
+.add-tab input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.home-search input,
+.notes-search input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 12px;
+}
+
+.add-tab button {
+  padding: 10px 15px;
+  background-color: #ff4081;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-tab button:hover {
+  opacity: 0.9;
+}
+
+/* Floating Action Button */
+.fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #ff4081;
+  color: #fff;
+  font-size: 28px;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: 0.2s;
+}
+
+.fab:hover {
+  transform: scale(1.1);
+}
+
+/* Profile */
+.profile-tab p {
+  margin: 10px 0;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 420px;
+}
+
+.profile-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.profile-form input {
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: none;
+  margin-top: 6px;
+}
+
+.profile-form button {
+  width: fit-content;
+  padding: 8px 12px;
+  background: #ff4081;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
