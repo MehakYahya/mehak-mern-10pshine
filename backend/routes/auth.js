@@ -140,6 +140,68 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+
+// Update profile (requires Authorization header with Bearer token)
+router.put('/profile', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return res.status(401).json({ message: 'Unauthorized' });
+    const token = authHeader.split(' ')[1];
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key');
+    } catch (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    const { name, email, password } = req.body;
+    const user = await User.findById(payload.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) {
+      const hashed = bcrypt.hashSync(password, 10);
+      user.password = hashed;
+    }
+
+    await user.save();
+
+    // return updated name (and optionally new token)
+      const resetToken = jwt.sign(
+        { id: user._id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+      const resetLink = `${process.env.CLIENT_BASE || 'http://localhost:4200'}/reset-password?token=${resetToken}`;
+  } catch (err) {
+    console.error('Profile update error', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get profile 
+router.get('/profile', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return res.status(401).json({ message: 'Unauthorized' });
+    const token = authHeader.split(' ')[1];
+    let payload;
+    try {
+      payload = jwt.verify(token, 'your_secret_key');
+    } catch (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    const user = await User.findById(payload.id).select('name email');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.status(200).json({ name: user.name, email: user.email });
+  } catch (err) {
+    console.error('Profile fetch error', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 module.exports = router;
 
 
