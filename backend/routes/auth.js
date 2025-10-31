@@ -167,13 +167,18 @@ router.put('/profile', async (req, res) => {
 
     await user.save();
 
-    // return updated name (and optionally new token)
-      const resetToken = jwt.sign(
-        { id: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
-      const resetLink = `${process.env.CLIENT_BASE || 'http://localhost:4200'}/reset-password?token=${resetToken}`;
+    // return updated name 
+      const newToken = jwt.sign(
+      { id: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET || 'your_secret_key',
+      { expiresIn: '1h' }
+    );
+    res.status(200).json({
+      message: 'Profile updated successfully!',
+      name: user.name,
+      email: user.email,
+      token: newToken
+    });
   } catch (err) {
     console.error('Profile update error', err);
     res.status(500).json({ message: 'Server error' });
