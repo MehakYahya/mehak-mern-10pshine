@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "./ForgotPassword.css";
 
 // ForgotPassword
 const ForgotPassword = () => {
+const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -23,14 +25,10 @@ const ForgotPassword = () => {
     }
     setLoading(true);
     try {
-      const clientCode = Math.floor(100000 + Math.random() * 900000).toString();
-      sessionStorage.setItem("resetCode", clientCode);
-      console.log(`DEV: Generated reset code for ${email}: ${clientCode}`);
-
-      const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
+  const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code: clientCode }),
+        body: JSON.stringify({ email }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -58,22 +56,6 @@ const ForgotPassword = () => {
       return;
     }
     setLoading(true);
-    const savedCode = sessionStorage.getItem("resetCode");
-    if (savedCode) {
-      if (savedCode !== code) {
-        setMessage("Code incorrect. Please check the code sent to your email.");
-        setIsError(true);
-        setLoading(false);
-        return;
-      }
-      
-      sessionStorage.removeItem("resetCode");
-      setMessage("Password reset successful (dev). You can now log in.");
-      setIsError(false);
-      setStep(3);
-      setLoading(false);
-      return;
-    }
     try {
       const response = await fetch("http://localhost:5000/api/auth/reset-password", {
         method: "POST",
@@ -82,9 +64,7 @@ const ForgotPassword = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setMessage(data.message || "Password reset successful!");
-        setIsError(false);
-        setStep(3);
+        navigate("/login");
       } else {
         setMessage(data.message || "Reset failed");
         setIsError(true);
@@ -148,13 +128,7 @@ const ForgotPassword = () => {
         </>
       )}
 
-      {step === 3 && (
-        <div className="success">
-          <p>{message}</p>
-          <Link to="/login">Back to Login</Link>
-        </div>
-      )}
-
+ 
       {message && step !== 3 && <div className={isError ? "error" : "success"}>{message}</div>}
 
       <p className="back-to-login-link">
