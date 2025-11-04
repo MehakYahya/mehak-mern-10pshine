@@ -1,33 +1,28 @@
 import React, { useState } from "react";
-import "./Signup.css";
+import "../Auth/AuthUnified.css";
 import { Link, useNavigate } from "react-router-dom";
 
 function Signup() {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
-  const [message, setMessage] = useState(""); 
-  const [isError, setIsError] = useState(false);
-  const navigate = useNavigate(); // ✅ Initialize navigate
+  const navigate = useNavigate(); 
 
   const validateForm = () => {
     const { name, email, password } = formData;
 
     if (!name || name.length < 3) {
-      setMessage("Name must be at least 3 characters long");
-      setIsError(true);
+      alert("Name must be at least 3 characters long");
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
-      setMessage("Please enter a valid email address");
-      setIsError(true);
+      alert("Please enter a valid email address");
       return false;
     }
 
     const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
     if (!password || password.length < 6 || !passwordRegex.test(password)) {
-      setMessage("Password must be at least 6 characters and include a number & special character");
-      setIsError(true);
+      alert("Password must be at least 6 characters and include a number & special character");
       return false;
     }
 
@@ -53,77 +48,60 @@ function Signup() {
       const result = await response.json();
 
       if (response.ok) {
-        setMessage(result.message);
-        setIsError(false);
+        alert(result.message || "Signup successful!");
         setFormData({ name: "", email: "", password: "" });
         localStorage.setItem("token", result.token);
-         setTimeout(() => navigate("/login"), 2000);
+        setTimeout(() => navigate("/login"), 1000);
       } else {
-        setMessage(result.message || "Signup failed!");
-        setIsError(true);
+        alert(result.message || "Signup failed!");
       }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("Error connecting to backend!");
-      setIsError(true);
+  alert("Error connecting to backend!");
     }
   };
 
   return (
-    <div className="signup-container">
-      <h2 className="signup-title">Signup</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Enter your name</label>
+    <div className="auth-form-wrapper">
+      <div className="auth-left">
+        <div className="auth-left-content">
+          <h2>Welcome!</h2>
+          <p>Already have an account?</p>
+          <button className="auth-register-btn" onClick={() => navigate('/login')}>Login</button>
+        </div>
+      </div>
+      <div className="auth-right">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <h1>Sign Up</h1>
+          {}
           <input
             type="text"
-            id="name"
+            placeholder="Name"
             name="name"
-            placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
             required
           />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="email">Enter your email</label>
           <input
             type="email"
-            id="email"
+            placeholder="Email"
             name="email"
-            placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
             required
           />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="password">Enter your password</label>
           <input
             type="password"
-            id="password"
-            name="password"
             placeholder="Password"
+            name="password"
             value={formData.password}
             onChange={handleChange}
             required
           />
-        </div>
-
-        <button type="submit">Sign Up</button>
-      </form>
-
-      {message && (
-        <p className={`signup-message ${isError ? "error" : "success"}`}>
-          {message}
-        </p>
-      )}
-
-      <p className="login-link">
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+          <button type="submit">Sign Up</button>
+          {/* message now shown above */}
+        </form>
+      </div>
     </div>
   );
 }

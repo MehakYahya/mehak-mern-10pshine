@@ -1,11 +1,11 @@
+
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./ForgotPassword.css";
 
-// ForgotPassword
+
 const ForgotPassword = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -76,64 +76,69 @@ const navigate = useNavigate();
     setLoading(false);
   };
 
+
   return (
     <div className="forgot-password-container">
       <h2>Forgot Password</h2>
 
       {step === 1 && (
-        <>
-          <p>Enter your email to receive a reset code.</p>
-          <form onSubmit={handleSendCode}>
-            <label htmlFor="fp-email" className="sr-only">Email</label>
-            <input id="fp-email" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <button type="submit" disabled={loading} className="forgot-btn">{loading ? "Sending..." : "Send"}</button>
-          </form>
-        </>
+        <form onSubmit={handleSendCode}>
+          <div className="form-group">
+            <label htmlFor="fp-email">Email</label>
+            <input
+              id="fp-email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="forgot-btn" disabled={loading}>
+            {loading ? "Sending..." : "Send Code"}
+          </button>
+        </form>
       )}
 
       {step === 2 && (
-        <>
-          <p>Enter the code and your new password.</p>
-          <form onSubmit={handleResetPassword}>
-            <div className="form-group">
-              <label htmlFor="reset-code">Code</label>
-              <input
-                id="reset-code"
-                name="resetCode"
-                type="text"
-                placeholder="123456"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="new-password">Password</label>
-              <input
-                id="new-password"
-                name="newPassword"
-                type="password"
-                placeholder="New password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <button type="submit" disabled={loading} className="forgot-btn">
-              {loading ? "Resetting..." : "Reset"}
-            </button>
-          </form>
-        </>
+        <form onSubmit={handleResetPassword}>
+          <div className="form-group">
+            <label htmlFor="reset-code">Code</label>
+            <input
+              id="reset-code"
+              type="text"
+              placeholder="Enter code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="new-password">New Password</label>
+            <input
+              id="new-password"
+              type="password"
+              placeholder="Enter new password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="forgot-btn" disabled={loading}>
+            {loading ? "Resetting..." : "Reset Password"}
+          </button>
+        </form>
       )}
 
- 
-      {message && step !== 3 && <div className={isError ? "error" : "success"}>{message}</div>}
+      {message && (
+        <div className={isError ? "error" : "success"} style={{ marginTop: 16 }}>
+          {message}
+        </div>
+      )}
 
-      <p className="back-to-login-link">
+      <div className="back-to-login-link">
         Remember your password? <Link to="/login">Login</Link>
-      </p>
+      </div>
     </div>
   );
 };
