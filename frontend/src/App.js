@@ -34,6 +34,10 @@ function App() {
           path="/notes/:id/edit"
           element={<RequireAuth><NoteEditor /></RequireAuth>}
         />
+          <Route
+          path="/secret"
+          element={<RequireAuth><SecretNotesPage /></RequireAuth>}
+        />
       </Routes>
     </div>
   );
