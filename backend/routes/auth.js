@@ -54,8 +54,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// In-memory store for reset codes (for dev/demo only)
 const resetCodes = {};
 
+// Forgot Password (code-based)
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
@@ -64,9 +66,12 @@ router.post("/forgot-password", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found!" });
 
+    // Generate 4-digit code
     const code = Math.floor(1000 + Math.random() * 9000).toString();
+    // Store code with user id (expires in 15 min)
     resetCodes[user._id] = { code, expires: Date.now() + 15 * 60 * 1000 };
 
+    // Send code via email
     try {
       await sendPasswordResetCodeEmail(email, code);
       res.status(200).json({
@@ -75,6 +80,7 @@ router.post("/forgot-password", async (req, res) => {
       });
     } catch (emailError) {
       console.error("Code email sending failed:", emailError);
+      // Fallback: do not return the code in production; return error for now
       res.status(500).json({ message: "Failed to send reset code email. Please try again later." });
     }
   } catch (err) {
@@ -83,6 +89,7 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
+// Reset Password (code-based)
 router.post("/reset-password", async (req, res) => {
   const { email, code, newPassword } = req.body;
   try {
@@ -99,13 +106,17 @@ router.post("/reset-password", async (req, res) => {
     const submittedCode = String(code).trim();
     if (!stored) return res.status(400).json({ message: "Invalid or expired code!" });
 
+    // Check expiration first
     if (Date.now() > stored.expires) {
+      // remove expired code
       delete resetCodes[user._id];
       return res.status(400).json({ message: "Code has expired!" });
     }
 
+    // initialize attempts counter if missing
     stored.attempts = stored.attempts || 0;
 
+    // If too many failed attempts, invalidate the code
     if (stored.attempts >= 5) {
       delete resetCodes[user._id];
       return res.status(429).json({ message: "Too many invalid attempts. Please request a new code." });
@@ -120,6 +131,7 @@ router.post("/reset-password", async (req, res) => {
     user.password = hashedPassword;
     await user.save();
 
+    // Remove code after use
     delete resetCodes[user._id];
 
     res.status(200).json({ message: "Password reset successful!" });
@@ -130,6 +142,7 @@ router.post("/reset-password", async (req, res) => {
 });
 
 
+// Update profile (requires Authorization header with Bearer token)
 router.put('/profile', async (req, res) => {
   try {
     const authHeader = req.headers.authorization || req.headers.Authorization;
@@ -187,13 +200,15 @@ router.get('/profile', async (req, res) => {
       return res.status(401).json({ message: 'Invalid token' });
     }
 
-  const user = await User.findById(payload.id).select('name email profileImage');
-  if (!user) return res.status(404).json({ message: 'User not found' });
+    const user = await User.findById(payload.id).select('name email profileImage');
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-  res.status(200).json({ name: user.name, email: user.email, profileImage: user.profileImage });
+    res.status(200).json({ name: user.name, email: user.email, profileImage: user.profileImage });
   } catch (err) {
     console.error('Profile fetch error', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
 module.exports = router;
+
+

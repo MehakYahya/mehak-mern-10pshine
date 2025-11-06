@@ -1,0 +1,111 @@
+.note-editor {
+  max-width: 850px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 24px 28px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+  overflow: visible !important; /* ✅ ensure nothing clips */
+  z-index: 1;
+}
+
+.note-editor input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1.1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.note-editor input:focus {
+  border-color: #007bff;
+}
+
+/* ---- QUILL EDITOR ---- */
+.note-quill {
+  overflow: visible !important;
+  position: relative;
+  z-index: 10;
+}
+
+/* toolbar */
+.ql-toolbar.ql-snow {
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  z-index: 20;
+  position: relative;
+  margin-bottom: 10px; /* ✅ adds visible gap below toolbar */
+  overflow: visible !important;
+}
+
+/* content box */
+.ql-container.ql-snow {
+  border-radius: 0 0 8px 8px;
+  border: 1px solid #ccc;
+  border-top: none;
+  min-height: 300px;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* Force all images in note content to fixed size */
+/* Force all images in note content to small fixed size */
+.note-content img {
+  width: 200px !important;
+  height: 150px !important;
+  max-width: 200px !important;
+  max-height: 150px !important;
+  object-fit: cover !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* force dropdown visibility */
+.ql-toolbar .ql-formats,
+.ql-toolbar,
+.ql-container,
+.note-editor,
+.note-quill {
+  overflow: visible !important;
+}
+
+/* ---- ACTION BUTTONS ---- */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.actions button:first-child {
+  background: #007bff;
+  color: white;
+}
+
+.actions button:first-child:hover {
+  background: #0056b3;
+}
+.actions button:last-child {
+  background: #eee;
+}
+
+.actions button:last-child:hover {
+  background: #ddd;
+}

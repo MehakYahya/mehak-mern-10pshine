@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Signup from './pages/Signup/Signup';
+import Login from './pages/Login/Login';
+import ForgotPassword from './pages/Login/ForgotPassword';
+import ResetPassword from './pages/Login/ResetPassword';
+import Dashboard from './pages/Dashboard/Dashboard';
+import Notes from './pages/Notes/Notes';
+import NoteEditor from './pages/Notes/NoteEditor';
+import RequireAuth from './components/RequireAuth';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path="/" element={<Navigate to="/signup" replace />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/dashboard"
+          element={<RequireAuth><Dashboard /></RequireAuth>}
+        />
+        <Route
+          path="/notes"
+          element={<RequireAuth><Notes /></RequireAuth>}
+        />
+        <Route
+          path="/notes/new"
+          element={<RequireAuth><NoteEditor /></RequireAuth>}
+        />
+        <Route
+          path="/notes/:id/edit"
+          element={<RequireAuth><NoteEditor /></RequireAuth>}
+        />
+      </Routes>
     </div>
   );
 }
