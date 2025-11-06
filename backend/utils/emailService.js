@@ -1,3 +1,17 @@
+// In test environment
+if (process.env.NODE_ENV === 'test') {
+  module.exports = {
+    sendPasswordResetEmail: async (email, resetToken) => {
+      console.log('[emailService:test] sendPasswordResetEmail ->', email, resetToken);
+      return { success: true, messageId: 'test-mode' };
+    },
+    sendPasswordResetCodeEmail: async (email, code) => {
+      console.log('[emailService:test] sendPasswordResetCodeEmail ->', email, code);
+      return { success: true, messageId: 'test-mode', code };
+    }
+  };
+  return;
+}
 const nodemailer = require("nodemailer");
 
 // Create transporter for Gmail
