@@ -97,12 +97,16 @@ router.post("/forgot-password", async (req, res) => {
 
     // Send code via email
     try {
-      await sendPasswordResetCodeEmail(email, code);
+      const sendResult = await sendPasswordResetCodeEmail(email, code);
       logger.info(`Password reset code sent to: ${email}`);
-      res.status(200).json({
+      const responsePayload = {
         message: "Password reset code has been sent to your email.",
         info: "Check your inbox and spam folder. Code expires in 15 minutes."
-      });
+     };
+      if (process.env.NODE_ENV === 'test' && sendResult && sendResult.code) {
+        responsePayload.testCode = sendResult.code;
+      }
+      res.status(200).json(responsePayload);
     } catch (emailError) {
       logger.error("Code email sending failed: " + emailError);
       // Fallback: do not return the code in production; return error for now
