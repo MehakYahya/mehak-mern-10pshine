@@ -374,7 +374,7 @@ function Dashboard() {
   
 
   useEffect(() => {
-    if (profileName) return;
+    if (profileName && profileImageUrl) return;
     const t = localStorage.getItem('token');
     if (!t) return;
     try {
@@ -382,7 +382,7 @@ function Dashboard() {
       if (payload?.name) { setProfileName(payload.name); localStorage.setItem('name', payload.name); }
       if (payload?.email) { setProfileEmail(payload.email); localStorage.setItem('email', payload.email); }
     } catch (err) { console.error('Failed to parse token for profile info', err); }
-  }, [profileName]);
+  }, [profileName, profileImageUrl]);
 
   useEffect(() => {
     const t = localStorage.getItem('token');
@@ -394,6 +394,13 @@ function Dashboard() {
         const data = await res.json();
         if (data.name) { setProfileName(data.name); localStorage.setItem('name', data.name); }
         if (data.email) { setProfileEmail(data.email); localStorage.setItem('email', data.email); }
+        if (data.profileImage) {
+          setProfileImageUrl(data.profileImage);
+          localStorage.setItem('profileImage', data.profileImage);
+        } else {
+          setProfileImageUrl("");
+          localStorage.removeItem('profileImage');
+        }
       } catch (err) { console.error('Failed to fetch profile', err); }
     })();
   }, []);
@@ -413,7 +420,11 @@ function Dashboard() {
       const res = await fetch(`${apiBase}/api/auth/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
-        body: JSON.stringify({ name: profileName, password: profilePassword || undefined }),
+        body: JSON.stringify({
+          name: profileName,
+          password: profilePassword || undefined,
+          profileImage: pendingProfileImage !== null ? pendingProfileImage : profileImageUrl || undefined
+        }),
       });
       if (didTimeout) return; 
       clearTimeout(timeout);
@@ -422,17 +433,11 @@ function Dashboard() {
       if (data.token) localStorage.setItem('token', data.token);
       if (data.name) localStorage.setItem('name', data.name);
       if (data.email) localStorage.setItem('email', data.email);
-      // Update top bar avatar if profile image changed
-      if (pendingProfileImage !== null) {
-        if (pendingProfileImage) {
-          localStorage.setItem('profileImage', pendingProfileImage);
-          setProfileImageUrl(pendingProfileImage);
-        } else {
-          localStorage.removeItem('profileImage');
-          setProfileImageUrl(null);
-        }
-        setPendingProfileImage(null);
+      if (typeof data.profileImage !== 'undefined') {
+        setProfileImageUrl(data.profileImage);
+        localStorage.setItem('profileImage', data.profileImage);
       }
+      setPendingProfileImage(null);
       setProfileMessage("");
       setProfilePassword('');
       window.alert("Profile updated successfully!");
@@ -930,7 +935,7 @@ function Dashboard() {
       </div>
 
       </div>
-      {}
+      {/* Removed floating back arrow button */}
     </>
   );
 }
