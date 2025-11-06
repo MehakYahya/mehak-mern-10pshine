@@ -68,7 +68,7 @@ function Dashboard() {
 
   const handleSecretPasswordSubmit = (e) => {
     e.preventDefault();
-    if (secretPasswordInput === SECRET_DASHBOARD_PASSWORD) {
+ if (secretPasswordInput === getSecretDashboardPassword()) {
       setShowSecretPasswordModal(false);
       navigate('/secret');
     } else {
