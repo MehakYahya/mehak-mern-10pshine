@@ -935,7 +935,21 @@ function Dashboard() {
       </div>
 
       </div>
-      {}
+      {/* Floating Add Button for dashboard */}
+      <button
+        className="fab"
+        title="Add Note"
+        onClick={() => {
+          setShowEditorModal(true);
+          setEditingId(null);
+          setTitle("");
+          setContent("");
+          setKeywords("");
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      >+
+      </button>
+      {/* Removed floating back arrow button */}
     </>
   );
 }
