@@ -9,6 +9,8 @@ import Notes from './pages/Notes/Notes';
 import NoteEditor from './pages/Notes/NoteEditor';
 import RequireAuth from './components/RequireAuth';
 
+import SecretNotesPage from './pages/SecretNotesPage';
+
 function App() {
   return (
     <div className="App">
@@ -34,7 +36,7 @@ function App() {
           path="/notes/:id/edit"
           element={<RequireAuth><NoteEditor /></RequireAuth>}
         />
-          <Route
+        <Route
           path="/secret"
           element={<RequireAuth><SecretNotesPage /></RequireAuth>}
         />
