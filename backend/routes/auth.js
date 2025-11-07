@@ -104,9 +104,9 @@ router.post("/forgot-password", async (req, res) => {
         info: "Check your inbox and spam folder. Code expires in 15 minutes."
       };
       // In test environment return the code so tests can assert reset flows
-      if (process.env.NODE_ENV === 'test' && sendResult && sendResult.code) {
-        responsePayload.testCode = sendResult.code;
-      }
+       if (process.env.NODE_ENV === 'test') {
+          responsePayload.testCode = code;
+        }
       res.status(200).json(responsePayload);
     } catch (emailError) {
   logger.error("Code email sending failed: " + emailError);

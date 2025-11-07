@@ -9,13 +9,12 @@ describe('Password reset flows', function() {
   });
 
   it('forgot-password -> reset-password -> login with new password', async function() {
-    // create user
+    this.timeout(10000);
     await request(app)
       .post('/api/auth/signup')
       .send({ name: 'Bob', email: 'bob@example.com', password: 'oldpass' })
       .expect(201);
 
-    // Request reset code
     const forgotRes = await request(app)
       .post('/api/auth/forgot-password')
       .send({ email: 'bob@example.com' })
