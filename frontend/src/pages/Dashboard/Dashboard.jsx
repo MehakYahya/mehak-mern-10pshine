@@ -56,8 +56,8 @@ function Dashboard() {
   const [showSecretPasswordModal, setShowSecretPasswordModal] = useState(false);
   const [secretPasswordInput, setSecretPasswordInput] = useState("");
   const [secretPasswordError, setSecretPasswordError] = useState("");
-  // Use the same password as SecretNotesPage.js
-  const SECRET_DASHBOARD_PASSWORD = "letmein";
+  // Read the current secret dashboard password from localStorage (keeps in sync with SecretNotesPage)
+  const getSecretDashboardPassword = () => localStorage.getItem('secretDashboardPass') || 'letmein';
 
   // Handler for logo click
   const handleLogoClick = () => {
@@ -68,7 +68,7 @@ function Dashboard() {
 
   const handleSecretPasswordSubmit = (e) => {
     e.preventDefault();
- if (secretPasswordInput === getSecretDashboardPassword()) {
+    if (secretPasswordInput === getSecretDashboardPassword()) {
       setShowSecretPasswordModal(false);
       navigate('/secret');
     } else {
@@ -137,6 +137,8 @@ function Dashboard() {
   const [notesPage, setNotesPage] = useState(1);
   const [activeTab, setActiveTab] = useState("home"); // home, add, notes, profile
   const [showEditorModal, setShowEditorModal] = useState(false);
+  // Don't mount heavy editor (ReactQuill) immediately to reduce visual flicker
+  const [quillReady, setQuillReady] = useState(false);
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
   const [filteredNotes, setFilteredNotes] = useState([]);
   const [title, setTitle] = useState("");
@@ -322,6 +324,7 @@ function Dashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const wasEditing = Boolean(editingId);
       const noteData = {
         title,
         content,
@@ -332,6 +335,8 @@ function Dashboard() {
       } else {
         await axios.post(`${apiBase}/api/notes`, noteData, { headers: { Authorization: `Bearer ${token}` } });
       }
+      // Notify the user on successful add/update
+      try { window.alert(wasEditing ? 'Note updated successfully!' : 'Note added successfully!'); } catch (e) { /* noop in environments where alert isn't available */ }
       setTitle("");
       setContent("");
       setKeywords("");
@@ -456,6 +461,9 @@ function Dashboard() {
   // Only show non-secret tags in tag filter
   const allTags = useMemo(() => Array.from(new Set(notes.filter(n => !(n.keywords || []).some(k => (k || '').trim().toLowerCase() === 'secret')).flatMap(n => n.keywords || []))), [notes]);
 
+  // Count only notes that are not marked as secret (so Total Notes reflects visible notes)
+  const visibleNotesCount = useMemo(() => notes.filter(n => !(n.keywords || []).some(k => (k || '').trim().toLowerCase() === 'secret')).length, [notes]);
+
 
   const handleProfileImageChange = (e) => {
     const fileInput = e.target;
@@ -478,6 +486,18 @@ function Dashboard() {
       setKeywords("");
     }
   }, [editingId, showEditorModal]);
+
+  // Defer mounting the Quill editor slightly after the modal opens to avoid layout thrash
+  useEffect(() => {
+    let t;
+    if (showEditorModal) {
+      // small delay lets the modal overlay render first
+      t = setTimeout(() => setQuillReady(true), 40);
+    } else {
+      setQuillReady(false);
+    }
+    return () => clearTimeout(t);
+  }, [showEditorModal]);
 
 
   return (
@@ -606,7 +626,7 @@ function Dashboard() {
                 </select>
               </div>
             </div>
-            <p style={{ color: 'var(--muted)', marginTop: 12 }}>Total Notes: {notes.length}</p>
+            <p style={{ color: 'var(--muted)', marginTop: 12 }}>Total Notes: {visibleNotesCount}</p>
 
             <h3 className="dashboard-header-gradient" style={{ color: '#1C6EA4', marginLeft: '5px' }}>Recent Notes</h3>
             <div className="recent-notes note-grid">
@@ -733,7 +753,11 @@ function Dashboard() {
               </div>
               <form onSubmit={handleSubmit}>
                 <input type="text" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} required style={{ width: '100%', marginBottom: 12, fontSize: 18, borderRadius: 8, border: '1.5px solid #b0c4de', padding: '10px 14px' }} />
-                <ReactQuill modules={quillModules} value={content} onChange={setContent} style={{ marginBottom: 12, borderRadius: 8, background: '#fff' }} />
+                {quillReady ? (
+                  <ReactQuill modules={quillModules} value={content} onChange={setContent} style={{ marginBottom: 12, borderRadius: 8, background: '#fff' }} />
+                ) : (
+                  <div className="quill-placeholder" style={{ minHeight: 120, marginBottom: 12, borderRadius: 8, background: '#fff' }} />
+                )}
                 {keywords && (
                   <div className="note-keywords-edit" style={{ marginBottom: 8, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {keywords.split(',').map((k, i) => {
@@ -940,12 +964,13 @@ function Dashboard() {
         className="fab"
         title="Add Note"
         onClick={() => {
-          setShowEditorModal(true);
+          // Set form fields first (minimize re-renders after modal opens)
           setEditingId(null);
           setTitle("");
           setContent("");
           setKeywords("");
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          // Then open modal; avoid scrolling/animations which can cause flicker
+          setShowEditorModal(true);
         }}
       >+
       </button>

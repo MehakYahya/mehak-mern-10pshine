@@ -172,11 +172,12 @@
   background: linear-gradient(145deg, #ffffff, #f0f0f0);
   box-shadow: 0 10px 30px rgba(0,0,0,0.10), 0 1px 8px rgba(0,0,0,0.06);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  transition: transform 0.3s ease;
+  transition: box-shadow 0.3s ease;
 }
 .dashboard-main:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.15), 0 3px 12px rgba(0,0,0,0.08);
+  /* Avoid transform-based hover (prevents layout/zoom issues) */
+  transform: none;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12), 0 3px 12px rgba(0,0,0,0.06);
 }
 
 .dashboard-header {
@@ -1533,11 +1534,18 @@ body {
   aspect-ratio: 1/1;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(30,40,60,0.12);
-  transition: 0.12s;
+  transition: box-shadow 0.12s, transform 0.12s;
+  z-index: 1200; /* keep the FAB above other content */
 }
 
 .fab:hover {
-  transform: translateY(-3px);
+  /* Avoid moving layout on hover; just increase elevation visually */
+  transform: none;
+  box-shadow: 0 12px 34px rgba(30,40,60,0.18);
+}
+
+.fab:active {
+  transform: none;
 }
 
 /* Profile */
