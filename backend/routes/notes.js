@@ -3,13 +3,56 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const Note = require("../models/Note");
 
-// GET all notes for logged-in user
+// GET all notes for logged-in user (pinned first, then by date)
 router.get("/", auth, async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.user.id }).sort({ date: -1 });
+    const notes = await Note.find({ user: req.user.id, archived: false })
+      .sort({ pinned: -1, date: -1 });
     res.json(notes);
   } catch (err) {
     console.error("Error fetching notes:", err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// GET archived notes for logged-in user
+router.get("/archived", auth, async (req, res) => {
+  try {
+    const notes = await Note.find({ user: req.user.id, archived: true })
+      .sort({ pinned: -1, date: -1 });
+    res.json(notes);
+  } catch (err) {
+    console.error("Error fetching archived notes:", err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// PATCH pin/unpin a note
+router.patch("/:id/pin", auth, async (req, res) => {
+  try {
+    let note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: "Note not found" });
+    if (note.user.toString() !== req.user.id) return res.status(401).json({ message: "Not authorized" });
+    note.pinned = !note.pinned;
+    await note.save();
+    res.json(note);
+  } catch (err) {
+    console.error("Error pinning note:", err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// PATCH archive/unarchive a note
+router.patch("/:id/archive", auth, async (req, res) => {
+  try {
+    let note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: "Note not found" });
+    if (note.user.toString() !== req.user.id) return res.status(401).json({ message: "Not authorized" });
+    note.archived = !note.archived;
+    await note.save();
+    res.json(note);
+  } catch (err) {
+    console.error("Error archiving note:", err.message);
     res.status(500).json({ message: "Server Error" });
   }
 });

@@ -8,6 +8,13 @@ before(async function() {
   mongod = await MongoMemoryServer.create();
   const uri = mongod.getUri();
   process.env.MONGO_URI = uri;
+    try {
+    if (mongoose.connection && mongoose.connection.readyState) {
+      await mongoose.disconnect();
+    }
+  } catch (e) {
+    // ignore any disconnect errors in setup
+  }
   await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 });
 
