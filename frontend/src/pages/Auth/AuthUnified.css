@@ -1,0 +1,138 @@
+/* Login & Signup Unified Modern Styles */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+html, body {
+  height: 100%;
+background: linear-gradient(90deg, #dfec9c 0%, #9CAFAA 100%) !important;  font-family: "Poppins", sans-serif;
+
+}
+
+.auth-form-wrapper {
+  width: 850px;
+  height: 550px;
+  background: #fff;
+  border-radius: 30px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.auth-left {
+  background: #154D71;
+  width: 50%;
+  height: 100%;
+  border-radius: 30px 30% 30% 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auth-left-content {
+  text-align: center;
+  color: #fff;
+}
+.auth-left-content h2 {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.auth-left-content p {
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+.auth-left-content .auth-register-btn {
+  border: 2px solid #fff;
+  width: 160px;
+  height: 46px;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 12px;
+}
+.auth-left-content .auth-register-btn:hover {
+  /* New hover effect: glow and scale, no color change */
+  box-shadow: 0 0 16px 4px rgba(51, 161, 224, 0.25), 0 4px 20px rgba(21,77,113,0.10);
+  transform: scale(1.07) rotate(-1deg);
+  border-color: #33A1E0;
+}
+
+.auth-right {
+  width: 50%;
+  height: 100%;
+  position: relative;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auth-form {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.auth-form h1 {
+  font-size: 36px;
+  text-align: center;
+  font-weight: bold;
+  opacity: 0.7;
+  margin-bottom: 24px;
+}
+.auth-form input {
+  width: 100%;
+  padding: 13px 50px 13px 20px;
+  margin: 10px 0;
+  background: #FFE6D4;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: "Poppins", sans-serif;
+}
+.auth-form input:focus {
+  outline: none;
+  background: #fff;
+  border: 2px solid #33A1E0;
+  box-shadow: 0 0 0 2px #ffe6ef;
+}
+.auth-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #2d3748;
+}
+.auth-form .auth-forgot {
+  color: #000;
+  display: block;
+  margin-bottom: 20px;
+  text-align: right;
+  font-size: 14px;
+}
+.auth-form button {
+  background: #1C6EA4;
+  width: 100%;
+  height: 48px;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.auth-form .auth-or {
+  text-align: center;
+  margin: 16px 0 8px 0;
+  color: #888;
+  font-size: 14px;
+}
+.auth-form .auth-socials {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+

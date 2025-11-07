@@ -102,6 +102,7 @@
 .actions button:first-child:hover {
   background: #0056b3;
 }
+
 .actions button:last-child {
   background: #eee;
 }
@@ -109,3 +110,29 @@
 .actions button:last-child:hover {
   background: #ddd;
 }
+
+/* Actions row used on notes list (view page) */
+.note-actions-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+.note-actions-row a,
+.note-actions-row button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.note-actions-row a {
+  background: #1976d2;
+  color: #fff;
+  text-decoration: none;
+}
+.note-actions-row button {
+  background: #f5f5f5;
+  color: #222;
+}
+.note-actions-row button:hover { opacity: 0.95; }
