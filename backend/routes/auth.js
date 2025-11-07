@@ -32,12 +32,12 @@ router.post("/signup", async (req, res) => {
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
-    const token = jwt.sign({ id: user._id, name: user.name }, "your_secret_key", { expiresIn: "1h" });
-    logger.info(`User registered: ${user.email}`);
-    res.status(201).json({ message: "User registered successfully!", token, name: user.name });
+  const token = jwt.sign({ id: user._id, name: user.name }, "your_secret_key", { expiresIn: "1h" });
+  logger.info(`User registered: ${user.email}`);
+  res.status(201).json({ message: "User registered successfully!", token, name: user.name });
   } catch (error) {
-    logger.error('🔥 Signup error details: ' + error.message);
-    logger.error('🔥 Stack trace: ' + error.stack);
+  logger.error('🔥 Signup error details: ' + error.message);
+  logger.error('🔥 Stack trace: ' + error.stack);
     res.status(500).json({ message: error.message || "Something went wrong!" });
   }
 });
@@ -63,11 +63,11 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password!" });
     }
 
-    const token = jwt.sign({ id: user._id, name: user.name }, "your_secret_key", { expiresIn: "1h" });
-    logger.info(`User login: ${user.email}`);
-    res.status(200).json({ message: "Login successful!", token, name: user.name });
+  const token = jwt.sign({ id: user._id, name: user.name }, "your_secret_key", { expiresIn: "1h" });
+  logger.info(`User login: ${user.email}`);
+  res.status(200).json({ message: "Login successful!", token, name: user.name });
   } catch (err) {
-    logger.error(err);
+  logger.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -102,18 +102,19 @@ router.post("/forgot-password", async (req, res) => {
       const responsePayload = {
         message: "Password reset code has been sent to your email.",
         info: "Check your inbox and spam folder. Code expires in 15 minutes."
-     };
+      };
+      // In test environment return the code so tests can assert reset flows
       if (process.env.NODE_ENV === 'test' && sendResult && sendResult.code) {
         responsePayload.testCode = sendResult.code;
       }
       res.status(200).json(responsePayload);
     } catch (emailError) {
-      logger.error("Code email sending failed: " + emailError);
+  logger.error("Code email sending failed: " + emailError);
       // Fallback: do not return the code in production; return error for now
       res.status(500).json({ message: "Failed to send reset code email. Please try again later." });
     }
   } catch (err) {
-    logger.error(err);
+  logger.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -176,10 +177,10 @@ router.post("/reset-password", async (req, res) => {
     // Remove code after use
     delete resetCodes[user._id];
 
-    logger.info(`Password reset successful for: ${email}`);
-    res.status(200).json({ message: "Password reset successful!" });
+  logger.info(`Password reset successful for: ${email}`);
+  res.status(200).json({ message: "Password reset successful!" });
   } catch (err) {
-    logger.error(err);
+  logger.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -230,7 +231,7 @@ router.put('/profile', async (req, res) => {
       token: newToken
     });
   } catch (err) {
-    logger.error('Profile update error: ' + err);
+  logger.error('Profile update error: ' + err);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -248,15 +249,13 @@ router.get('/profile', async (req, res) => {
       return res.status(401).json({ message: 'Invalid token' });
     }
 
-    const user = await User.findById(payload.id).select('name email profileImage');
-    if (!user) return res.status(404).json({ message: 'User not found' });
+  const user = await User.findById(payload.id).select('name email profileImage');
+  if (!user) return res.status(404).json({ message: 'User not found' });
 
-    res.status(200).json({ name: user.name, email: user.email, profileImage: user.profileImage });
+  res.status(200).json({ name: user.name, email: user.email, profileImage: user.profileImage });
   } catch (err) {
-    logger.error('Profile fetch error: ' + err);
+  logger.error('Profile fetch error: ' + err);
     res.status(500).json({ message: 'Server error' });
   }
 });
 module.exports = router;
-
-

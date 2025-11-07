@@ -1,9 +1,34 @@
+
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiBase, authHeaders } from "../../utils/api";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import './NoteEditor.css';
+
+// Pin/archive logic for editing a note (UI at bottom)
+export function PinArchiveControls({ noteId, pinned, archived, onStatusChange }) {
+  const [pin, setPin] = useState(pinned);
+  const [archive, setArchive] = useState(archived);
+  useEffect(() => { setPin(pinned); setArchive(archived); }, [pinned, archived]);
+
+  const togglePin = async () => {
+    await fetch(`${apiBase}/api/notes/${noteId}/pin`, { method: "PATCH", headers: authHeaders() });
+    setPin(p => !p);
+    onStatusChange && onStatusChange();
+  };
+  const toggleArchive = async () => {
+    await fetch(`${apiBase}/api/notes/${noteId}/archive`, { method: "PATCH", headers: authHeaders() });
+    setArchive(a => !a);
+    onStatusChange && onStatusChange();
+  };
+  return (
+    <div style={{ display: 'flex', gap: 8, margin: '12px 0' }}>
+      <button type="button" onClick={togglePin}>{pin ? "Unpin" : "Pin"}</button>
+      <button type="button" onClick={toggleArchive}>{archive ? "Unarchive" : "Archive"}</button>
+    </div>
+  );
+}
 
 export default function NoteEditor() {
   const [title, setTitle] = useState("");
